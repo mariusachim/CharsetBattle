@@ -29,7 +29,9 @@ public class BaseTests {
     @Test
     public void testUTF8File8Encoding() {
         System.out.println("*** " + UTF_8 + " ***");
-        checkFileInputs(UTF_8);
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UCS2_BE.txt", UTF_8));
+        Assert.assertEquals("中国", readAndDisplay("encoded_with_UTF8.txt", UTF_8));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_GB2312.txt", UTF_8));
         System.out.println();
         System.out.println();
         Assert.assertEquals("中国", readAndDisplay("encoded_with_UTF8.txt", UTF_8));
@@ -38,7 +40,9 @@ public class BaseTests {
     @Test
     public void testUTF16FileEncoding() {
         System.out.println("*** " + UTF_16 + " ***");
-        checkFileInputs(UTF_16);
+        Assert.assertEquals("中国", readAndDisplay("encoded_with_UCS2_BE.txt", UTF_16));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UTF8.txt", UTF_16));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_GB2312.txt", UTF_16));
         System.out.println();
         System.out.println();
         Assert.assertEquals("中国", readAndDisplay("encoded_with_UCS2_BE.txt", UTF_16));
@@ -48,7 +52,9 @@ public class BaseTests {
     @Test
     public void testASCIIFileEncoding() {
         System.out.print("*** " + US_ASCII + " ***");
-        checkFileInputs(US_ASCII);
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UCS2_BE.txt", US_ASCII));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UTF8.txt", US_ASCII));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_GB2312.txt", US_ASCII));
         System.out.println();
         System.out.println();
     }
@@ -56,12 +62,11 @@ public class BaseTests {
     @Test
     public void testGB18030FileEncoding() {
         System.out.print("*** " + GB18030 + " ***");
-        // checkFileInputs(GB18030);
-        System.out.println();
-        System.out.println();
-
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UCS2_BE.txt", GB18030));
+        Assert.assertNotEquals("中国", readAndDisplay("encoded_with_UTF8.txt", GB18030));
         Assert.assertEquals("中国", readAndDisplay("encoded_with_GB2312.txt", GB18030));
-
+        System.out.println();
+        System.out.println();
     }
 
     @Test
@@ -80,12 +85,6 @@ public class BaseTests {
         // TODO Change encoding of file from test
     }
 
-    private void checkFileInputs(Charset charset) {
-        readAndDisplay("encoded_with_UCS2_BE.txt", charset);
-        readAndDisplay("encoded_with_UTF8.txt", charset);
-        readAndDisplay("encoded_with_GB2312.txt", charset);
-    }
-
     private String readAndDisplay(String fileName, Charset charset) {
         String returnMe = "";
         try {
@@ -93,7 +92,7 @@ public class BaseTests {
             List<String> defaultEncoded = IOUtils.readLines(in, DEFAULT);
             in = getClass().getResourceAsStream(fileName);
             List<String> charsetLines = IOUtils.readLines(in, charset);
-            System.out.println("\t" + fileName + ": " + charsetLines);
+            System.out.println(charset + "\t" + fileName + ": " + charsetLines);
             //Assert.assertEquals(typical.get(0), charsetLines.get(0));
             byte[] defaultEncBytes = defaultEncoded.get(0).getBytes();
             byte[] charsetBytes = charsetLines.get(0).getBytes(charset);
